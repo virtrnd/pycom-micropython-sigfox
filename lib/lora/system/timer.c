@@ -358,23 +358,29 @@ void IRAM_ATTR TimerSetValue( TimerEvent_t *obj, uint32_t value )
 
 IRAM_ATTR TimerTime_t TimerGetValue( void )
 {
-    return TimerHwGetElapsedTime( );
+    return RtcGetElapsedAlarmTime( );
 }
 
 IRAM_ATTR TimerTime_t TimerGetCurrentTime( void )
 {
-    return TimerHwGetTime( );
-}
-
-static IRAM_ATTR void TimerSetTimeout( TimerEvent_t *obj )
-{
-    HasLoopedThroughMain = 0;
-    TimerHwStart( obj->Timestamp );
+    return RtcGetTimerValue( );
 }
 
 IRAM_ATTR TimerTime_t TimerGetElapsedTime( TimerTime_t savedTime )
 {
-    return TimerHwComputeTimeDifference( savedTime );
+    return RtcComputeElapsedTime( savedTime );
+}
+
+TimerTime_t TimerGetFutureTime( TimerTime_t eventInFuture )
+{
+    return RtcComputeFutureEventTime( eventInFuture );
+}
+
+IRAM_ATT static void TimerSetTimeout( TimerEvent_t *obj )
+{
+    HasLoopedThroughMain = 0;
+    obj->Timestamp = RtcGetAdjustedTimeoutValue( obj->Timestamp );
+    RtcSetTimeout( obj->Timestamp );
 }
 
 void TimerLowPowerHandler( void )
@@ -388,7 +394,10 @@ void TimerLowPowerHandler( void )
         else
         {
             HasLoopedThroughMain = 0;
-            TimerHwEnterLowPowerStopMode( );
+            if( GetBoardPowerSource( ) == BATTERY_POWER )
+            {
+                RtcEnterLowPowerStopMode( );
+            }
         }
     }
 }

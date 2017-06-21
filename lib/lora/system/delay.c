@@ -21,5 +21,5 @@ void Delay( float s )
 
 void DelayMs( uint32_t ms )
 {
-    TimerHwDelayMs( ms );
+    HAL_Delay( ms );
 }

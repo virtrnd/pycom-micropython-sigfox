@@ -95,6 +95,14 @@ TimerTime_t TimerGetCurrentTime( void );
 TimerTime_t TimerGetElapsedTime( TimerTime_t savedTime );
 
 /*!
+ * \brief Return the Time elapsed since a fix moment in Time
+ *
+ * \param [IN] eventInFuture    fix moment in the future
+ * \retval time             returns difference between now and future event
+ */
+TimerTime_t TimerGetFutureTime( TimerTime_t eventInFuture );
+
+/*!
  * \brief Manages the entry into ARM cortex deep-sleep mode
  */
 void TimerLowPowerHandler( void );
