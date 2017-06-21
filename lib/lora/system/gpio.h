@@ -1,4 +1,18 @@
 /*
+ * This file is derived from the MicroPython project, http://micropython.org/
+ *
+ * Copyright (c) 2016, Pycom Limited and its licensors.
+ *
+ * This software is licensed under the GNU GPL version 3 or any later version,
+ * with permitted additional terms. For more information see the Pycom Licence
+ * v1.0 document supplied with this file, or available at:
+ * https://www.pycom.io/opensource/licensing
+ *
+ * This file contains code under the following copyright and licensing notices.
+ * The code has been changed but otherwise retained.
+ */
+
+/*
  / _____)             _              | |
 ( (____  _____ ____ _| |_ _____  ____| |__
  \____ \| ___ |    (_   _) ___ |/ ___)  _ \
@@ -32,7 +46,6 @@ Maintainer: Miguel Luis and Gregory Cristian
 #include "machpin.h"
 
 #include "pinName-board.h"
-#include "pinName-ioe.h"
 
 /*!
  * Board GPIO pin names
@@ -40,7 +53,6 @@ Maintainer: Miguel Luis and Gregory Cristian
 typedef enum
 {
     MCU_PINS,
-    IOE_PINS,
 
     // Not connected
     NC = (int)0xFFFFFFFF
@@ -102,22 +114,13 @@ typedef enum
  */
 typedef struct
 {
-    PinNames  pin;
-    uint16_t pinIndex;
-    void *port;
-    uint16_t portIndex;
-    PinTypes pull;
-}Gpio_t;
+    pin_obj_t *pin_obj;
+} Gpio_t;
 
 /*!
  * GPIO IRQ handler function prototype
  */
 typedef void( GpioIrqHandler )( void );
-
-/*!
- * GPIO Expander IRQ handler function prototype
- */
-typedef void( GpioIoeIrqHandler )( void );
 
 /*!
  * \brief Initializes the given GPIO object
@@ -128,7 +131,7 @@ typedef void( GpioIoeIrqHandler )( void );
  *                              PIN_ALTERNATE_FCT, PIN_ANALOGIC]
  * \param [IN] config Pin config [PIN_PUSH_PULL, PIN_OPEN_DRAIN]
  * \param [IN] type   Pin type [PIN_NO_PULL, PIN_PULL_UP, PIN_PULL_DOWN]
- * \param [IN] value  Default output value at initialization
+ * \param [IN] value  Default output value at initialisation
  */
 void GpioInit( Gpio_t *obj, PinNames pin, PinModes mode, PinConfigs config, PinTypes type, uint32_t value );
 
@@ -160,19 +163,4 @@ void GpioRemoveInterrupt( Gpio_t *obj );
  */
 void GpioWrite( Gpio_t *obj, uint32_t value );
 
-/*!
- * \brief Toggle the value to the GPIO output
- *
- * \param [IN] obj   Pointer to the GPIO object
- */
-void GpioToggle( Gpio_t *obj );
-
-/*!
- * \brief Reads the current GPIO input value
- *
- * \param [IN] obj Pointer to the GPIO object
- * \retval value   Current GPIO input value
- */
-uint32_t GpioRead( Gpio_t *obj );
-
-#endif // __GPIO_H__
+#endif // __LORA_GPIO_H__
